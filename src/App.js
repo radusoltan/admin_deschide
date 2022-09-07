@@ -1,25 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import { Route, Routes } from "react-router-dom"
+import { Dashboard } from "./components/Dashboard"
+import { Login } from "./components/Login"
+import { Protected } from "./components/Protected"
+import { Categories } from "./components/content/categories"
+import './scss/app.scss'
+import { Articles } from "./components/content/articles"
+import { Category } from "./components/content/categories/category"
+import { Article } from "./components/content/articles/article"
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+const App = () => {
+  return <Routes>
+    <Route path="/" element={<Protected />}>
+      <Route index element={<Dashboard />} />
+      <Route path="content/categories" element={<Categories/>} />
+      <Route path="content/category/:category" element={<Category />} />
+      <Route path="content/articles" element={<Articles/>} />
+      <Route path="content/article/:article" element={<Article/>} />
+    </Route>
+    <Route path="/login" element={<Login />} />
+  </Routes>
 }
 
-export default App;
+export default App

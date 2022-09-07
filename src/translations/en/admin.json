@@ -1,0 +1,40 @@
+{
+  "menu": {
+    "dashboard": "Dashboard",
+    "content": {
+      "head": "Content",
+      "categories": "Categories"
+    },
+    "management": {
+      "head": "Management",
+      "users": "Users"
+    }
+  },
+  "pages": {
+    "content": {
+      "categories": {
+        "index": "Categories",
+        "edit": "Edit",
+        "update": "Update",
+        "delete": "Delete",
+        "add": "Add",
+        "table": {
+          "title": "Title",
+          "in_menu": "In menu",
+          "actions": "Actions"
+        },
+        "form": {
+          "title": "Title",
+          "in_menu": "In menu",
+          "error_title": "Title is required"
+        },
+        "messages": {
+          "added": "Category added successfuly",
+          "deleted": "Category deleted successfully",
+          "translated": "Category translated successfully",
+          "updated": "Category edited successfully"
+        }
+      }
+    }
+  }
+}
