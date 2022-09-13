@@ -2,11 +2,13 @@ import { Button, Card, Form, Space, Input, Row, Col, Spin, Select, Switch, Divid
 import React, { useEffect,useState, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import i18n from '../../../i18n'
-import { useGetArticleQuery, useUpdateArticleMutation } from '../../../services/articles'
+import { useGetArticleQuery, useUpdateArticleMutation, useDeleteArticlePublishTimeMutation } from '../../../services/articles'
 import { Editor } from '@tinymce/tinymce-react'
 import { ArticleImages } from '../images/articleImages'
 import { BodyEditor } from './editor'
-
+import Related from './related'
+import {DeleteOutlined} from "@ant-design/icons"
+import PublishEvent from './publishEvent'
 
 export const Article = () => {
   const navigate = useNavigate()
@@ -17,8 +19,10 @@ export const Article = () => {
   const {data,isLoading,isSuccess} = useGetArticleQuery(article)
 
   const [articleBody,setArticleBody] = useState()
+  const [publishEvent,setPublishEvent] = useState(false)
 
   const [updateArticle] = useUpdateArticleMutation()
+  const [deletePublishTime] = useDeleteArticlePublishTimeMutation()
  
 
   useEffect(()=>{
@@ -36,7 +40,7 @@ export const Article = () => {
 
   const {is_breaking, is_alert, is_flash, translations, category_id } = data
   const { title, status, lead, body} = translations.find(({locale})=>i18n.language===locale)
-
+  const publishedEventElement = translations.find(({publish_at})=>publish_at)
   const onFinish = values => {
     console.log(values)
   }
@@ -70,13 +74,16 @@ export const Article = () => {
     navigate(`/content/category/${category_id}`)
   }
 
-  return <Card loading={isLoading} extra={
-    <Space>
-      <Button type="success" onClick={save}>Save</Button>
-      <Button type="info" onClick={saveAndClose}>Save & Close</Button>
-      <Button type="danger" onClick={close}>Close</Button>
-    </Space>
-  }>
+  return <Card loading={isLoading} 
+    extra={
+      <Space>
+        <Button type="success" onClick={save}>Save</Button>
+        <Button type="info" onClick={saveAndClose}>Save & Close</Button>
+        <Button type="danger" onClick={close}>Close</Button>
+      </Space>
+    }
+    title={status === 'P' ? 'Published Article' : status === 'S' ? "Submited" : "New"}
+  >
     <Form
       form={form}
       initialValues={{
@@ -88,7 +95,6 @@ export const Article = () => {
         is_flash,
         status
       }}
-      onFinish={onFinish}
     >
       <Form.Item name="title" label="Title">
         <Input size="large" maxLength={200} showCount={true} />
@@ -108,19 +114,20 @@ export const Article = () => {
               }}
               field={'body'}
             />
-
+          {/* Related Articles */}
+          <Related article={article} />
           </Card>
         </Col>
         <Col span={6}>
           <Card>
             <Form.Item name='status' label="Status">
-            <Select >
-              <Option value='N'>New</Option>
-              <Option value='S'>Submited</Option>
-              <Option value='P'>Published</Option>
-            </Select>
-          </Form.Item>
-          <Divider />
+              <Select >
+                <Option value='N'>New</Option>
+                <Option value='S'>Submited</Option>
+                <Option value='P'>Published</Option>
+              </Select>
+            </Form.Item>
+            <Divider />
             <Form.Item name="is_flash" label="FLASH" valuePropName="checked">
               <Switch defaultChecked={is_flash}  />
             </Form.Item>
@@ -130,9 +137,40 @@ export const Article = () => {
             <Form.Item name='is_breaking' label="BREAKING" valuePropName="checked">
               <Switch defaultChecked={is_breaking} />
             </Form.Item>
+            {
+              status === 'S' && 
+              <Card>
+
+                {publishedEventElement &&
+
+                  <div className='article-event'>
+                    <DeleteOutlined 
+                      style={{ marginLeft: "auto", fontSize: 12, float: "right" }}
+                      onClick={()=>{
+                        console.log('delete event', publishedEventElement.id)
+                        deletePublishTime(publishedEventElement.id)
+                      }}
+                    />
+                    Publish At <br />
+                    <span style={{
+                      padding: "0 0 0 10px"
+                    }}>{publishedEventElement.publish_at}</span>
+                  </div>
+
+                }
+                <Button
+                  onClick={()=>{
+                    setPublishEvent(true)
+                  }}
+                >Add</Button>
+              </Card>
+            }
+            <PublishEvent article={article} visible={publishEvent} onCancel={()=>setPublishEvent(false)} onOk={()=>setPublishEvent(false)}  />
+            
           </Card>
           {/* Article Images */}
           <ArticleImages article={article} />
+          
         </Col>
       </Row>
     </Form>

@@ -99,6 +99,7 @@ export const Cropper = ({image, rendition, renditions, complete}) => {
       <Divider />
       <Button onClick={()=>{
         cropImage({image: image.id,rendition:selectedRendition,crop:completedCrop})
+        complete()
       }}>Save</Button>
     </Card> 
   </Col>
