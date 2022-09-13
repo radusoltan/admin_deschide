@@ -48,7 +48,7 @@ export const Cropper = ({visible, onCancel, image, onOk}) => {
 
     if (imageThumbnailsSuccess){
 
-      imageThumbnails.map(th=>console.log(th))
+      imageThumbnails.map(th=>({}))
 
     }
     

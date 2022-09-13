@@ -67,8 +67,6 @@ export const ArticleImages = ({article}) => {
     
   </Card></div>)
 
-  
-
   return <Card extra={<Button
       className='image-card-buttons'
         type="info"
@@ -93,25 +91,14 @@ export const ArticleImages = ({article}) => {
     />
 
     {
-      !images.length === 0 ? 
-        <Cropper
+      images.length === 0 ? '' : 
+        <Cropper 
           visible={crop} 
-          onCancel={()=>{
-            setCrop(false)}
-          }
           image={data.find(({isMain})=>isMain)}
-          onOk={()=>{
-            setCrop(false)
-            notification.success({
-              message: 'Image saved'
-            })
-          }}
-      /> : <>No Image</>
+          onOk={()=>setCrop(false)}
+          onCancel={()=>setCrop(false)}
+        />
     }
-
-    {/*  */}
-
-    {/* <Cropper visible={crop} image={data.find(({isMain})=>isMain)} /> */}
     
   </Card>
 }
