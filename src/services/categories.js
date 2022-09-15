@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-const baseURL = process.env.REACT_APP_API_URL
+const baseUrl = process.env.REACT_APP_API_URL
 const headers = {
     Authorization: 'Bearer '+localStorage.getItem('token')
 }
@@ -9,22 +9,22 @@ const createRequest = url => ({url,headers})
 
 export const categories = createApi({
     reducerPath: 'categories',
-    baseQuery: fetchBaseQuery({baseURL}),
+  baseQuery: fetchBaseQuery({ baseUrl }),
     tagTypes: ['Categories'],
     endpoints: build => ({
         getCategories: build.query({
-            query: page => createRequest(baseURL+`/categories?page=${page}`),
+            query: page => createRequest(`/categories?page=${page}`),
             providesTags: result => result ? [
                 ...result.data.map(({id})=>({type: 'Categories',id})),
                 {type: 'Categories', id: 'PARTIAL-LIST'}
             ] : [{type: 'Categories', id: 'PARTIAL-LIST'}]
         }),
         getCategory: build.query({
-            query: ({id}) => createRequest(baseURL+`/categories/${id}`)
+            query: ({id}) => createRequest(`/categories/${id}`)
         }),
         addCategory: build.mutation({
             query: data => ({
-                url: baseURL+'/categories',
+                url: '/categories',
                 method: 'POST',
                 body: data,
                 headers
@@ -33,7 +33,7 @@ export const categories = createApi({
         }),
         updateCategory: build.mutation({
             query: ({id,body}) => ({
-                url: baseURL+`/categories/${id}`,
+                url: `/categories/${id}`,
                 method: 'PATCH',
                 body,
                 headers
@@ -42,7 +42,7 @@ export const categories = createApi({
         }),
         deleteCategory: build.mutation({
             query: id => ({
-                url: baseURL+`/categories/${id}`,
+                url: `/categories/${id}`,
                 method: 'DELETE',
                 headers
             }),
@@ -50,7 +50,7 @@ export const categories = createApi({
         }),
         publishCategory: build.mutation({
             query: (id) => ({
-                url: baseURL+`/category/${id}`,
+                url: `/category/${id}`,
                 method: "PATCH",
                 body: {},
                 headers

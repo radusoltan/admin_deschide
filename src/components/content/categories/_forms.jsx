@@ -167,7 +167,7 @@ export const AddArticle = ({visible,onCancel, onAdd}) => {
       form
         .validateFields()
         .then(values=>{
-          form.resetFields()
+          // form.resetFields()
           onAdd(values)
         })
     }}
