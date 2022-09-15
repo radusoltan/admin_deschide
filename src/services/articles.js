@@ -48,7 +48,7 @@ export const articles = createApi({
         query: ({category,values}) => ({
           url: baseUrl+`/category/${category}/add-article`,
           method: "POST",
-          body: values,
+          body: {...values},
           headers
         }),
         invalidatesTags: (result,error,obj) => console.log('articles API inv obj', obj)

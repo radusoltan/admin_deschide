@@ -5,8 +5,10 @@ import { useGetArticlesByCategoryQuery, useAddArticleMutation } from '../../../s
 import { useTranslation } from 'react-i18next'
 import { AddArticle } from './_forms'
 import i18n from '../../../i18n'
+import moment from 'moment'
 
 export const Category = () => {
+  moment.locale('ro')
   const [page,setPage] = useState(1)
   const {category} = useParams()
   const {t} = useTranslation()
@@ -16,22 +18,37 @@ export const Category = () => {
   const [q,setQ] = useState(null)
 
   const { data, isLoading } = useGetArticlesByCategoryQuery({category,page,q})
-  const [addArticle, { isLoading: addIsLoading, data: addData, isSuccess: addIsSuccess }] = useAddArticleMutation()
+  const [addArticle, { isLoading: addIsLoading, data: addData, isSuccess: addIsSuccess, error, isError }] = useAddArticleMutation()
   
   useEffect(()=>{
     if (addIsSuccess){
-      const {id} = addData  
-      navigate(`/content/article/${id}`)
-    }
-  }, [addIsSuccess])  
+      
+      if (addData.errorInfo){
+        notification.error({
+          message: t(addData.errorInfo[2])
+        })
+      } else {
+        const {id} = addData  
+        navigate(`/content/article/${id}`)
+        setIsNew(false)
+      }
 
-  const add = values => {
-    addArticle({category,values})
-    notification.success({
-      message: 'Articol adugat cu succes!'
-    })
-    setIsNew(false)
-  }
+      
+    }
+
+    if (isError){
+      console.log(error);
+    }
+
+  }, [addIsSuccess, isError])  
+
+  // const add = values => {
+    
+  //   // notification.success({
+  //   //   message: 'Articol adugat cu succes!'
+  //   // })
+  //   // setIsNew(false)
+  // }
 
   const changePage = page => {
     setPage(page);
@@ -56,7 +73,7 @@ export const Category = () => {
       title: 'Created',
       dataIndex: 'created_at',
       key: 'created_at',
-      render: text => <p>{text}</p>
+      render: text => <>{moment(text).fromNow()}</>
     }
   ]
 
@@ -94,7 +111,9 @@ export const Category = () => {
       onChange={changePage} />
     <AddArticle visible={isNew} onCancel={()=>{
       setIsNew(false)
-    }} onAdd={add} />
+    }} onAdd={(values) => {
+      addArticle({ category, values })
+    }} />
 
   </Card>
 }

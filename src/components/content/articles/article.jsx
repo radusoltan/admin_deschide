@@ -27,6 +27,7 @@ export const Article = () => {
 
   useEffect(()=>{
     if (isSuccess){
+      // console.log(data)
       const { translations } = data
       const { body, status, lead } = translations.find(({ locale }) => locale === i18n.language)
       setArticleBody(body)
@@ -39,11 +40,15 @@ export const Article = () => {
   }
 
   const {is_breaking, is_alert, is_flash, translations, category_id } = data
-  const { title, status, lead, body} = translations.find(({locale})=>i18n.language===locale)
+  const { title, status, lead, body} = translations.find(({locale})=>i18n.language===locale) ? 
+    translations.find(({locale})=>i18n.language===locale) : 
+    {
+      title: '',
+      status: 'N',
+      lead: '',
+      body: ''
+    }
   const publishedEventElement = translations.find(({publish_at})=>publish_at)
-  const onFinish = values => {
-    console.log(values)
-  }
 
   const save = () => {
     form.validateFields()
@@ -74,7 +79,8 @@ export const Article = () => {
     navigate(`/content/category/${category_id}`)
   }
 
-  return <Card loading={isLoading} 
+  return <Card
+    loading={isLoading} 
     extra={
       <Space>
         <Button type="success" onClick={save}>Save</Button>
@@ -82,7 +88,10 @@ export const Article = () => {
         <Button type="danger" onClick={close}>Close</Button>
       </Space>
     }
-    title={status === 'P' ? 'Published Article' : status === 'S' ? "Submited" : "New"}
+    title={
+      status === 'P' ? 'Published Article' : 
+      status === 'S' ? "Submited" : "New"
+    }
   >
     <Form
       form={form}

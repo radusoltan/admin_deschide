@@ -5,6 +5,9 @@ import { articles } from './services/articles'
 import { articleImages } from './services/images'
 import { imageThumbnails } from './services/imageThumbnails'
 import { related } from './services/related'
+import { users } from './services/users'
+import { roles } from './services/roles'
+import { permissions } from './services/permissions'
 
 export const store = configureStore({
   reducer: {
@@ -12,14 +15,20 @@ export const store = configureStore({
     [articles.reducerPath]: articles.reducer,
     [articleImages.reducerPath]: articleImages.reducer,
     [imageThumbnails.reducerPath]: imageThumbnails.reducer,
-    [related.reducerPath]: related.reducer
+    [related.reducerPath]: related.reducer,
+    [users.reducerPath]: users.reducer,
+    [roles.reducerPath]: roles.reducer,
+    [permissions.reducerPath]: permissions.reducer
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware().concat([
     categories.middleware,
     articles.middleware,
     articleImages.middleware,
     imageThumbnails.middleware,
-    related.middleware
+    related.middleware,
+    users.middleware,
+    roles.middleware,
+    permissions.middleware
   ])
 })
 

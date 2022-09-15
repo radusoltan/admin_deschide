@@ -76,8 +76,8 @@ const Related = ({article}) => {
       <Button onClick={add}>Add</Button>
     </>}
   >
-    {
-        related.map(({id,translations})=>(<Card key={id}>
+    {related.length !== 0 ? <>{
+      related?.map(({id,translations})=>(<Card key={id}>
           <h3>{translations.find(({locale})=>locale===i18n.language).title}</h3>
           <Button
             icon={<DeleteOutlined />} 
@@ -87,6 +87,9 @@ const Related = ({article}) => {
             type="danger" 
           />
         </Card>))
+    }</>
+        
+        : <></>
       }
     
     <Modal
@@ -117,7 +120,7 @@ const Related = ({article}) => {
                 <Col span={24} key={id}>
                   <Checkbox value={id}>
                     <h4>
-                      {translations.find(({locale})=>locale===i18n.language).title}
+                      {/* {translations.find(({locale})=>locale===i18n.language).title} */}
                     </h4>
                   </Checkbox>                  
                 </Col>
