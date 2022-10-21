@@ -8,6 +8,7 @@ import { related } from './services/related'
 import { users } from './services/users'
 import { roles } from './services/roles'
 import { permissions } from './services/permissions'
+import {authors} from './services/authors'
 
 export const store = configureStore({
   reducer: {
@@ -18,7 +19,8 @@ export const store = configureStore({
     [related.reducerPath]: related.reducer,
     [users.reducerPath]: users.reducer,
     [roles.reducerPath]: roles.reducer,
-    [permissions.reducerPath]: permissions.reducer
+    [permissions.reducerPath]: permissions.reducer,
+    [authors.reducerPath]: authors.reducer
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware().concat([
     categories.middleware,
@@ -28,7 +30,8 @@ export const store = configureStore({
     related.middleware,
     users.middleware,
     roles.middleware,
-    permissions.middleware
+    permissions.middleware,
+    authors.middleware
   ])
 })
 
