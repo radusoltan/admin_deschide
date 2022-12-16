@@ -20,12 +20,12 @@ export const Cropper = ({visible, onCancel, image, onOk}) => {
   const [completedCrop, setCompletedCrop] = useState()
   const [aspect,setAspect] = useState()
   const [crop,setCrop] = useState({
-    // unit: '%',
-    // width: 100,
-    // aspect: 16/9
+    unit: '%',
+    width: 100,
+    aspect: 16/9
   })
 
-  const selecteRendition = id => {
+  const selectRendition = id => {
     setSelectedRendition(id)
     const th = imageThumbnails.find(thumb=>thumb.rendition_id===selectedRendition)
 
@@ -92,7 +92,7 @@ export const Cropper = ({visible, onCancel, image, onOk}) => {
       }
       hoverable
       onClick={()=>{
-        selecteRendition(rendition_id)     
+        selectRendition(rendition_id)
               
       }}
       bodyStyle={
@@ -102,7 +102,7 @@ export const Cropper = ({visible, onCancel, image, onOk}) => {
         } : {}      
       }
     >
-      {/* <Card.Meta>{ renditionName }</Card.Meta> */}
+       {/*<Card.Meta>{ renditionName }</Card.Meta> */}
     </Card>
   </div>)
 

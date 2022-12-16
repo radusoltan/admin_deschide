@@ -14,16 +14,10 @@ export const authors = createApi({
   endpoints: build => ({
     getArticleAuthors: build.query({
       query: article => createRequest(`/article/${article}/authors`),
-      providesTags: r => console.log('get auth',r)
-    }),
-    searchAuthor: build.mutation({
-      query: (body) => ({
-        url: baseUrl + `/authors/search`,
-        method: "POST",
-        body,
-        headers
-      }),
-      invalidatesTags: (result, error, obj) => console.log(' API inv obj', result)
+      providesTags: r => r ? [
+        ...r.map(({id})=>({type:'Authors',id})),
+        {type:'Authors',id:'LIST'}
+      ] : [{ type: 'Authors', id: 'LIST' }],
     }),
     addArticleAuthors: build.mutation({
       query: ({article, body})=>({
@@ -31,13 +25,49 @@ export const authors = createApi({
         method: 'POST',
         body,
         headers
-      })
+      }),
+      invalidatesTags: result => result ? [
+        ...result.map(({id})=>({type:'Authors',id})),
+        {type:'Authors',id:'LIST'}
+      ] : [{ type: 'Authors', id: 'LIST' }],
+    }),
+    getAllAuthors: build.query({
+      query: ()=>createRequest('/authors'),
+      providesTags: r => r ? [
+        ...r.map(({ id }) => ({ type: "Authors", id })),
+        {type: "Authors", id: "LIST"}
+      ] : [{type: "Authors", id: "LIST"}]
+    }),
+    addAuthor: build.mutation({
+      query: (body)=>({
+        url: baseUrl + `/authors`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: result => result ? [
+        ...result.map(({id})=>({type:'Authors',id})),
+        {type:'Authors',id:'LIST'}
+      ] : [{ type: 'Authors', id: 'LIST' }],
+    }),
+    deleteArticleAuthor: build.mutation({
+      query: ({article, authorId}) => ({
+        url: baseUrl + `/article/${article}/authors/${authorId}`,
+        method: 'DELETE',
+        headers
+      }),
+      invalidatesTags: (result, error, id) => result ? [
+        ...result.map(({id})=>({type:'Authors',id})),
+        {type:'Authors',id:'LIST'}
+      ] : [{ type: 'Authors', id: 'LIST' }],
     })
+
   })
 })
 
 export const {
   useGetArticleAuthorsQuery,
-  useSearchAuthorMutation,
-  useAddArticleAuthorsMutation
+  useAddArticleAuthorsMutation,
+  useGetAllAuthorsQuery,
+  useAddAuthorMutation,
+  useDeleteArticleAuthorMutation
 } = authors
