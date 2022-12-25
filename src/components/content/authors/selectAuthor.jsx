@@ -13,10 +13,23 @@ const SelectAuthor = ({visible, onCancel, onOk})=>{
 
   useEffect(() => {
     if (isSuccess){
-      setOptions(data.map(({id, translations})=>({
-        value: String(id),
-        label: String(translations.find(({locale})=>i18n.language===locale).full_name)
-      })))
+
+      setOptions(data.map(author => {
+
+        if(author.translations.length===0){
+          return {
+            value: String(),
+            label: "NO Full Name Author TRanslations",
+          }
+        } else {
+          return {
+            value: String(author.id),
+            label: String(author.translations.find(({locale})=>locale===i18n.language).full_name),
+          }
+        }
+
+      }))
+
     }
     if (isLoading){
       setLoading(true)
