@@ -53,7 +53,7 @@ const ArticleFormPage = () => {
       setLoading(true)
     }
     if (isSuccess){
-      console.log('Article form', data)
+      // console.log('Article form', data)
       setLoading(false)
       const {id, category_id, translations, is_alert, is_breaking, is_flash, visits } = data
       const {title, lead, body, status, publish_at, id: translationId} = translations.find(({locale}) => i18n.language === locale)
@@ -174,7 +174,7 @@ const ArticleFormPage = () => {
   const close = () => {navigate(`/content/category/${categoryId}`)}
 
   return <Card
-    title={`Visits: ${articleVisits.score}`}
+    title={`Visits: ${articleVisits.score} // ${articleTitle}`}
     loading={loading}
     extra={<Space direction="horizontal">
 
@@ -184,6 +184,9 @@ const ArticleFormPage = () => {
     </Space>}
   >
     <Input size="large" maxLength={200} showCount={true} onChange={handleTitleChange} value={articleTitle} />
+    <ArticleAuthors
+        article={article}
+    />
     <Row>
       <Col span={18}>
         <Card>
@@ -199,13 +202,6 @@ const ArticleFormPage = () => {
       </Col>
       <Col span={6}>
         <Card>
-
-          {/*<div style={{*/}
-          {/*  marginBottom: 20*/}
-          {/*}}>*/}
-          {/*  Visits: {articleVisits.score}*/}
-          {/*</div>*/}
-
           <Select onChange={handleStatusChange} value={articleStatus} >
             <Option value='N'>New</Option>
             <Option value='S'>Submitted</Option>
@@ -220,7 +216,6 @@ const ArticleFormPage = () => {
                 translationId={translationId}
                 deleteEvent={()=>{
                   deleteEvent(translationId)
-                  // console.log('Article Frorm delete Event', translationId)
                 }}
               />
             ) : ('')
@@ -265,9 +260,7 @@ const ArticleFormPage = () => {
               />
             </>
           </Card>
-          <ArticleAuthors
-            article={article}
-          />
+
           <ArticleImages article={article} />
         </Card>
       </Col>

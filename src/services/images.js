@@ -7,6 +7,32 @@ const headers = {
 
 const createRequest = url => ({ url, headers })
 
+export const Images = createApi({
+  reducerPath: 'Images',
+  baseQuery: fetchBaseQuery({baseUrl}),
+  tagTypes: ['Images'],
+  endpoints: build => ({
+    getAllImages: build.query({
+      query: (page)=> createRequest(`/images?page=${page}`),
+      providesTags: response => response ?
+          [
+            response.data.map(({id})=>({type: "Images",id})),
+            {type: "Images", id: "PARTIAL-LIST"}
+          ] : [{type: "Images", id: 'PARTIAL-LIST'}]
+      // providesTags: response => response ? [
+      //     ...response.data.data.map(({id})=> ({type: "Images", id})),
+      //     {type: "Images", id: 'PARTIAL-LIST'}
+      // ] : [{type: "Images", id: 'PARTIAL-LIST'}]
+    })
+  })
+
+})
+
+export const {
+  useGetAllImagesQuery
+
+} = Images
+
 export const articleImages = createApi({
   reducerPath: 'articleImages',
   baseQuery: fetchBaseQuery({baseUrl}),
@@ -24,6 +50,19 @@ export const articleImages = createApi({
         url: `/article/${article}/detach-images`,
         method: 'POST',
         body: {id},
+        headers
+      }),
+      invalidatesTags: result => result ? [
+        ...result.map(({id})=>({type: 'articleImages',id})),
+        {type:'articleImages',id:'LIST'}
+      ] : [{type:'articleImages',id:'LIST'}]
+    }),
+    attachArticleImage: build.mutation({
+
+      query: ({article,selectedImages})=>({
+        url: `/article/${article}/attach-images`,
+        method: 'POST',
+        body: {ids:selectedImages},
         headers
       }),
       invalidatesTags: result => result ? [
@@ -68,5 +107,6 @@ export const {
   useDetachArticleImageMutation,
   useUploadArticleImagesMutation,
   useSetArticleMainImageMutation,
-  useGetRenditionsQuery
+  useGetRenditionsQuery,
+  useAttachArticleImageMutation,
 } = articleImages

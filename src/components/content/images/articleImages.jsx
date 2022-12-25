@@ -1,4 +1,4 @@
-import { Card, Image, Spin, Button, Radio, Divider, Space, notification } from 'antd'
+import {Card, Image, Spin, Button, Radio, Divider, Space, notification, Modal} from 'antd'
 import {
   UploadOutlined,
   DeleteOutlined,
@@ -6,9 +6,15 @@ import {
   EditOutlined
 } from "@ant-design/icons"
 import React, { useEffect, useState } from 'react'
-import { useGetImagesByArticleQuery, useDetachArticleImageMutation, useSetArticleMainImageMutation } from '../../../services/images'
+import {
+  useGetImagesByArticleQuery,
+  useDetachArticleImageMutation,
+  useSetArticleMainImageMutation,
+  useAttachArticleImageMutation
+} from '../../../services/images'
 import { ArticleImageUploader } from './uploader'
 import { Cropper } from './cropper'
+import AllImages from "./AllImages";
 
 export const ArticleImages = ({article}) => {
 
@@ -17,9 +23,14 @@ export const ArticleImages = ({article}) => {
   const {data, isLoading, refetch} = useGetImagesByArticleQuery(article)
   const [setArticleMainImage] = useSetArticleMainImageMutation()
   const [detachArticleImages,{isLoading: detachIsLoading}] = useDetachArticleImageMutation()
+  const [attachArticleImages] = useAttachArticleImageMutation()
   const [crop,setCrop] = useState(false)
+  const [SelectFromLibrary, setSelectFromLibrary] = useState(false);
+  const [selectedImages, setSelectedImages] = useState()
 
-  
+  const selectFromLibrary = () => {
+    setSelectFromLibrary(true)
+  }
 
   if (isLoading){
     return <Spin />
@@ -66,16 +77,19 @@ export const ArticleImages = ({article}) => {
     
   </Card></div>)
 
-  return <Card extra={<Button
-      className='image-card-buttons'
+  return <Card extra={<Space direction="horizontal">
+    <Button className='image-card-buttons' type="primary" onClick={selectFromLibrary} >Select</Button>
+    <Button
+        className='image-card-buttons'
         type="info"
         icon={<UploadOutlined />}
         onClick={() =>{
           setUpload(true)
         }}
-      >
-        Upload
-      </Button>} loading={detachIsLoading}>
+    >
+      Upload
+    </Button>
+  </Space>} loading={detachIsLoading}>
     {images}
     
     <ArticleImageUploader 
@@ -98,6 +112,25 @@ export const ArticleImages = ({article}) => {
           onCancel={()=>setCrop(false)}
         />
     }
+
+    <Modal
+      visible={SelectFromLibrary}
+      width={'80%'}
+      onOk={()=>{
+        attachArticleImages({article,selectedImages})
+        setSelectFromLibrary(false)
+      }}
+      onCancel={()=>{
+        setSelectFromLibrary(false)
+      }}
+    >
+      <AllImages
+        onOk={(selected)=>{
+          setSelectedImages(selected)
+        }}
+        articleImages={data}
+      />
+    </Modal>
     
   </Card>
 }

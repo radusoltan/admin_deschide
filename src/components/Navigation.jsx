@@ -27,6 +27,7 @@ const items = [
       getItem(<NavLink to="/management/roles">{t("menu.management.roles")}</NavLink>, 'management/roles'),
       getItem(<NavLink to="/management/permissions">{t("menu.management.permissions")}</NavLink>, 'management/permissions'),
     ]),
+    getItem(<Link to="/media">{'Media Library'}</Link>,)
   ];
 
 

@@ -8,10 +8,12 @@ import { Articles } from "./components/content/articles"
 import { Category } from "./components/content/categories/category"
 
 
+
 import Users from "./components/management/users"
 import Roles from "./components/management/roles"
 import Permissions from "./components/management/permissions"
 import ArticleFormPage from "./components/content/articles/article";
+import MediaLibrary from "./components/media";
 
 
 const App = () => {
@@ -22,6 +24,7 @@ const App = () => {
       <Route path="content/category/:category" element={<Category />} />
       <Route path="content/articles" element={<Articles/>} />
       <Route path="content/article/:article" element={<ArticleFormPage />} />
+      <Route path="media" element={<MediaLibrary />} />
       <Route path="management/users" element={<Users />} />
       <Route path="management/roles" element={<Roles />} />
       <Route path="management/permissions" element={<Permissions />} />
