@@ -78,19 +78,19 @@ const Related = ({article}) => {
   >
     {related.length !== 0 ? <>{
       related?.map(({id,translations})=>(<Card key={id}>
-          <h3>{translations.find(({locale})=>locale===i18n.language).title}</h3>
-          <Button
-            icon={<DeleteOutlined />} 
-            onClick={() =>{
-              detachArticle({article,body:{id}})
-            }}
-            type="danger" 
-          />
-        </Card>))
+        <h3>{translations.find(({locale})=>locale===i18n.language).title}</h3>
+        <Button
+          icon={<DeleteOutlined />} 
+          onClick={() =>{
+            detachArticle({article,body:{id}})
+          }}
+          type="danger" 
+        />
+      </Card>))
     }</>
         
-        : <></>
-      }
+      : <></>
+    }
     
     <Modal
       visible={visible}
@@ -120,7 +120,7 @@ const Related = ({article}) => {
                 <Col span={24} key={id}>
                   <Checkbox value={id}>
                     <h4>
-                      {/* {translations.find(({locale})=>locale===i18n.language).title} */}
+                      {translations.find(({locale})=>locale===i18n.language).title}
                     </h4>
                   </Checkbox>                  
                 </Col>

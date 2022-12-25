@@ -1,187 +1,278 @@
-import { Button, Card, Form, Space, Input, Row, Col, Spin, Select, Switch, Divider, notification } from 'antd'
-import React, { useEffect,useState, useRef } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import i18n from '../../../i18n'
-import { useGetArticleQuery, useUpdateArticleMutation, useDeleteArticlePublishTimeMutation } from '../../../services/articles'
-import { Editor } from '@tinymce/tinymce-react'
-import { ArticleImages } from '../images/articleImages'
-import { BodyEditor } from './editor'
-import Related from './related'
-import {DeleteOutlined} from "@ant-design/icons"
-import PublishEvent from './publishEvent'
+import {
+  useDeleteArticlePublishTimeMutation,
+  useGetArticleQuery,
+  useUpdateArticleMutation
+} from "../../../services/articles";
+import {useParams, useNavigate} from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import i18n from "../../../i18n";
+import {Alert, Button, Card, Col, Divider, Input, notification, Row, Select, Space, Switch} from "antd";
+import {BodyEditor} from "./editor";
+import ArticleAuthors from "../authors/ArticleAuthors";
+import {ArticleImages} from "../images/articleImages";
+import SubmitEvents from "./submitEvents";
+import publishEvent from "./publishEvent";
 
-export const Article = () => {
-  const navigate = useNavigate()
-  const { TextArea } = Input
-  const {Option} = Select
-  const [form] = Form.useForm()
+const ArticleFormPage = () => {
   const {article} = useParams()
-  const {data,isLoading,isSuccess} = useGetArticleQuery(article)
+  const navigate = useNavigate()
+  // const [updateArticle] = useUpdateArticleMutation()
+  const {data, isLoading, isSuccess, isError} = useGetArticleQuery(article)
+  const [updateArticle,{data: updateArticleData,isLoading: updateArticleDataIsLoading, isSuccess: updateArticleIsSuccess}] = useUpdateArticleMutation()
+  const [deleteEvent,{data: deletedData,isSuccess: deletedSuccess}] = useDeleteArticlePublishTimeMutation()
+  const {Option} = Select
 
-  const [articleBody,setArticleBody] = useState()
-  const [publishEvent,setPublishEvent] = useState(false)
+  const [loading,setLoading] = useState(false)
+  const [articleTitle, setArticleTitle] = useState('')
+  const [articleLead, setArticleLead] = useState('')
+  const [articleBody, setArticleBody] = useState('')
+  const [articleIsAlert, setArticleIsAlert] = useState(false)
+  const [articleIsFlash, setArticleIsFlash] = useState(false)
+  const [articleIsBreaking, setArticleIsBreaking] = useState(false)
+  const [articleStatus, setArticleStatus] = useState('')
+  const [categoryId, setCategoryId] = useState('')
+  const [eventPublish, setEventPublish] = useState('')
+  const [translationId, setTranslationId] = useState('')
+  const [articleVisits, setArticleVisits] = useState({})
 
-  const [updateArticle] = useUpdateArticleMutation()
-  const [deletePublishTime] = useDeleteArticlePublishTimeMutation()
- 
+
+  const body = {
+    title: articleTitle,
+    lead: articleLead,
+    body: articleBody,
+    is_flash: articleIsFlash,
+    is_breaking: articleIsBreaking,
+    is_alert: articleIsAlert,
+    status: articleStatus,
+    categoryId: categoryId,
+    lng: i18n.language
+  }
 
   useEffect(()=>{
-    if (isSuccess){
-      // console.log(data)
-      const { translations } = data
-      const { body, status, lead } = translations.find(({ locale }) => locale === i18n.language)
-      setArticleBody(body)
-      // setArticleLead(lead)
+    if (isLoading||updateArticleDataIsLoading) {
+      setLoading(true)
     }
-  },[isSuccess])
+    if (isSuccess){
+      console.log('Article form', data)
+      setLoading(false)
+      const {id, category_id, translations, is_alert, is_breaking, is_flash, visits } = data
+      const {title, lead, body, status, publish_at, id: translationId} = translations.find(({locale}) => i18n.language === locale)
+      setArticleTitle(title)
+      setArticleLead(lead)
+      setArticleBody(body)
+      setArticleIsFlash(is_flash)
+      setArticleIsBreaking(is_breaking)
+      setArticleIsAlert(is_alert)
+      setArticleStatus(status)
+      setCategoryId(category_id)
+      setEventPublish(publish_at)
+      setTranslationId(translationId)
+      setArticleVisits(visits)
 
-  if (isLoading){
-    return <Spin />
+    }
+
+    if (updateArticleIsSuccess){
+      setLoading(false)
+      const {id, category_id, translations, is_alert, is_breaking, is_flash, visits } = updateArticleData
+      const {title, lead, body, status, publish_at, id: translationId} = translations.find(({locale}) => i18n.language === locale)
+      setArticleTitle(title)
+      setArticleLead(lead)
+      setArticleBody(body)
+      setArticleIsFlash(is_flash)
+      setArticleIsBreaking(is_breaking)
+      setArticleIsAlert(is_alert)
+      setArticleStatus(status)
+      setCategoryId(category_id)
+      setEventPublish(publish_at)
+      setTranslationId(translationId)
+      setArticleVisits(visits)
+      notification.success({
+        message: 'Articol salvat',
+        duration: 2
+      })
+    }
+    if(deletedSuccess){
+      setLoading(false)
+      const {id, category_id, translations, is_alert, is_breaking, is_flash, visits } = deletedData
+      const {title, lead, body, status, publish_at, id: translationId} = translations.find(({locale}) => i18n.language === locale)
+      setArticleTitle(title)
+      setArticleLead(lead)
+      setArticleBody(body)
+      setArticleIsFlash(is_flash)
+      setArticleIsBreaking(is_breaking)
+      setArticleIsAlert(is_alert)
+      setArticleStatus(status)
+      setCategoryId(category_id)
+      setEventPublish(publish_at)
+      setTranslationId(translationId)
+      setArticleVisits(visits)
+
+    }
+
+  },[
+    isSuccess,
+    isLoading,
+    updateArticleDataIsLoading,
+    updateArticleIsSuccess,
+    deletedSuccess
+  ])
+
+  const handleTitleChange = title => {
+    setArticleTitle(title.target.value)
   }
 
-  const {is_breaking, is_alert, is_flash, translations, category_id } = data
-  const { title, status, lead, body} = translations.find(({locale})=>i18n.language===locale) ? 
-    translations.find(({locale})=>i18n.language===locale) : 
-    {
-      title: '',
-      status: 'N',
-      lead: '',
-      body: ''
-    }
-  const publishedEventElement = translations.find(({publish_at})=>publish_at)
+  const handleLeadChange = lead => {
+    setArticleLead(lead.target.value)
+  }
+
+  const handleStatusChange = status => {
+
+    setArticleStatus(status)
+  }
+
 
   const save = () => {
-    form.validateFields()
-    
-    const formValues = form.getFieldsValue()
+    const arr = [
+      articleIsBreaking,
+      articleIsAlert,
+      articleIsFlash,
+    ]
+    // check if switcher is selected correctly
+    let checker = arr => arr.every(v => v === true);
+    if(checker(arr)){
+      console.log('all true')
+      notification.error({
+        message: 'Select only one (FLASH, ALERT or BREAKING)'
+      })
+    } else if (articleIsFlash && articleIsAlert){
+      console.log('check double')
+      notification.error({
+        message: 'Select only one (FLASH, ALERT or BREAKING)'
+      })
+    } else if (articleIsFlash && articleIsBreaking){
+      console.log('check double')
+      notification.error({
+        message: 'Select only one (FLASH, ALERT or BREAKING)'
+      })
+    } else if(articleIsAlert && articleIsBreaking){
+      console.log('check double')
+      notification.error({
+        message: 'Select only one (FLASH, ALERT or BREAKING)'
+      })
+    } else {
 
-    const body = {
-      ...formValues,
-      body: articleBody,
-      lng: i18n.language
+      updateArticle({article, body})
     }
 
-    updateArticle({article,body})
-
-    notification.success({
-      message: 'Articol salvat'
-    })
-    
   }
-
   const saveAndClose = () => {
     save()
-    navigate(`/content/category/${category_id}`)
+    setTimeout(()=>navigate(`/content/category/${categoryId}`),2000)
 
   }
 
-  const close = () => {
-    navigate(`/content/category/${category_id}`)
-  }
+  const close = () => {navigate(`/content/category/${categoryId}`)}
 
   return <Card
-    loading={isLoading} 
-    extra={
-      <Space>
-        <Button type="success" onClick={save}>Save</Button>
-        <Button type="info" onClick={saveAndClose}>Save & Close</Button>
-        <Button type="danger" onClick={close}>Close</Button>
-      </Space>
-    }
-    title={
-      status === 'P' ? 'Published Article' : 
-      status === 'S' ? "Submited" : "New"
-    }
-  >
-    <Form
-      form={form}
-      initialValues={{
-        title,
-        lead,
-        body,
-        is_breaking,
-        is_alert,
-        is_flash,
-        status
-      }}
-    >
-      <Form.Item name="title" label="Title">
-        <Input size="large" maxLength={200} showCount={true} />
-      </Form.Item>
-      <Row>
-        <Col span={18}>
-          <Card>
-            <Form.Item name='lead' label='Lead'>
-              <TextArea/>
-            </Form.Item>
+    title={`Visits: ${articleVisits.score}`}
+    loading={loading}
+    extra={<Space direction="horizontal">
 
-            <BodyEditor 
-              initialValue={articleBody} 
+      <Button onClick={save} type='success'>Save</Button>
+      <Button type="info" onClick={saveAndClose}>Save & Close</Button>
+      <Button type="danger" onClick={close}>Close</Button>
+    </Space>}
+  >
+    <Input size="large" maxLength={200} showCount={true} onChange={handleTitleChange} value={articleTitle} />
+    <Row>
+      <Col span={18}>
+        <Card>
+          <Input.TextArea value={articleLead} onChange={handleLeadChange} />
+          <BodyEditor
+              initialValue={articleBody}
               onEdit={body=>{
-                // console.log('onBodyEdit', body);
                 setArticleBody(body)
               }}
               field={'body'}
-            />
-          {/* Related Articles */}
-          <Related article={article} />
-          </Card>
-        </Col>
-        <Col span={6}>
+          />
+        </Card>
+      </Col>
+      <Col span={6}>
+        <Card>
+
+          {/*<div style={{*/}
+          {/*  marginBottom: 20*/}
+          {/*}}>*/}
+          {/*  Visits: {articleVisits.score}*/}
+          {/*</div>*/}
+
+          <Select onChange={handleStatusChange} value={articleStatus} >
+            <Option value='N'>New</Option>
+            <Option value='S'>Submitted</Option>
+            <Option value='P'>Published</Option>
+          </Select>
+
+          {
+            articleStatus==='S' ? (
+              <SubmitEvents
+                article={article}
+                eventPublish={eventPublish}
+                translationId={translationId}
+                deleteEvent={()=>{
+                  deleteEvent(translationId)
+                  // console.log('Article Frorm delete Event', translationId)
+                }}
+              />
+            ) : ('')
+          }
+
+          <Divider />
           <Card>
-            <Form.Item name='status' label="Status">
-              <Select >
-                <Option value='N'>New</Option>
-                <Option value='S'>Submited</Option>
-                <Option value='P'>Published</Option>
-              </Select>
-            </Form.Item>
-            <Divider />
-            <Form.Item name="is_flash" label="FLASH" valuePropName="checked">
-              <Switch defaultChecked={is_flash}  />
-            </Form.Item>
-            <Form.Item name='is_alert' label="ALERT" valuePropName="checked">
-              <Switch defaultChecked={is_alert} />
-             </Form.Item>
-            <Form.Item name='is_breaking' label="BREAKING" valuePropName="checked">
-              <Switch defaultChecked={is_breaking} />
-            </Form.Item>
-            {
-              status === 'S' && 
-              <Card>
-
-                {publishedEventElement &&
-
-                  <div className='article-event'>
-                    <DeleteOutlined 
-                      style={{ marginLeft: "auto", fontSize: 12, float: "right" }}
-                      onClick={()=>{
-                        console.log('delete event', publishedEventElement.id)
-                        deletePublishTime(publishedEventElement.id)
-                      }}
-                    />
-                    Publish At <br />
-                    <span style={{
-                      padding: "0 0 0 10px"
-                    }}>{publishedEventElement.publish_at}</span>
-                  </div>
-
-                }
-                <Button
-                  onClick={()=>{
-                    setPublishEvent(true)
-                  }}
-                >Add</Button>
-              </Card>
-            }
-            <PublishEvent article={article} visible={publishEvent} onCancel={()=>setPublishEvent(false)} onOk={()=>setPublishEvent(false)}  />
-            
+            <>
+              <p>FLASH</p>
+              <Switch
+                onChange={(prop)=> {
+                  setArticleIsFlash(prop)
+                }}
+                onClick={(prop)=> {
+                  setArticleIsFlash( prop)
+                }}
+                checked={articleIsFlash}
+              />
+            </>
+            <>
+              <p>ALERT</p>
+              <Switch
+                onChange={(prop)=> {
+                  setArticleIsAlert(prop)
+                }}
+                checked={articleIsAlert}
+                onClick={(prop)=> {
+                  setArticleIsAlert(prop)
+                }}
+              />
+            </>
+            <>
+              <p>BREAKING</p>
+              <Switch
+                onChange={(prop)=> {
+                  setArticleIsBreaking(prop)
+                }}
+                checked={articleIsBreaking}
+                onClick={(prop)=> {
+                  setArticleIsBreaking(prop)
+                }}
+              />
+            </>
           </Card>
-          {/* Article Images */}
+          <ArticleAuthors
+            article={article}
+          />
           <ArticleImages article={article} />
-          
-        </Col>
-      </Row>
-    </Form>
+        </Card>
+      </Col>
+    </Row>
   </Card>
 }
+
+export default ArticleFormPage

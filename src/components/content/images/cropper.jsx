@@ -20,19 +20,28 @@ export const Cropper = ({visible, onCancel, image, onOk}) => {
   const [completedCrop, setCompletedCrop] = useState()
   const [aspect,setAspect] = useState()
   const [crop,setCrop] = useState({
-    // unit: '%',
-    // width: 100,
-    // aspect: 16/9
+    unit: '%',
+    width: 100,
+    aspect: 16/9
   })
 
-  const selecteRendition = id => {
+  const saveCrop = () => {
+
+    cropImage({
+      image: image.id,
+      rendition:selectedRendition,
+      crop:{p:completedCrop,c: crop}
+    })
+  }
+
+  const selectRendition = id => {
     setSelectedRendition(id)
     const th = imageThumbnails.find(thumb=>thumb.rendition_id===selectedRendition)
 
     const {aspect,coords} = renditions.find((rendition)=>id===rendition.id)
     setAspect(aspect)
     // setCrop(coords)
-    if (Object.keys(coords).length != 0){
+    if (Object.keys(coords).length !== 0){
       setCrop(coords)
     }
 
@@ -48,7 +57,7 @@ export const Cropper = ({visible, onCancel, image, onOk}) => {
 
     if (imageThumbnailsSuccess){
 
-      imageThumbnails.map(th=>({}))
+      // console.log('imageThumbnailsSuccess', imageThumbnails)
 
     }
     
@@ -82,17 +91,17 @@ export const Cropper = ({visible, onCancel, image, onOk}) => {
 
   
 
-  const thumbnails = imageThumbnails?.map(({ path, id, rendition_id, name, coords })=><div className='thumbnail-container' key={id}>
+  const thumbnails = imageThumbnails?.map(({ path, id, rendition_id, name, coords, rendition })=><div className='thumbnail-container' key={id}>
     <Card
       // loading={isLoading}
-      cover={
-        completedCrop && selectedRendition === rendition_id ? 
-        <canvas ref={previewCanvasRef}/>  : //<></> 
+      cover={//<><Image src={process.env.REACT_APP_URL+path} preview={false} /></>
+        completedCrop && selectedRendition === rendition_id ?
+        <canvas ref={previewCanvasRef}/>  : //<></>
         <Image src={process.env.REACT_APP_URL+path} preview={false} />
       }
       hoverable
       onClick={()=>{
-        selecteRendition(rendition_id)     
+        selectRendition(rendition_id)
               
       }}
       bodyStyle={
@@ -102,7 +111,9 @@ export const Cropper = ({visible, onCancel, image, onOk}) => {
         } : {}      
       }
     >
-      {/* <Card.Meta>{ renditionName }</Card.Meta> */}
+      <h4>{rendition.name}</h4>
+      <p>{rendition.width} x {rendition.height}</p>
+
     </Card>
   </div>)
 
@@ -112,7 +123,7 @@ export const Cropper = ({visible, onCancel, image, onOk}) => {
     onCancel={onCancel} 
     width='70%' 
     onOk={()=>{ 
-      cropImage({image: image.id,rendition:selectedRendition,crop:{p:completedCrop,c: crop}})
+      // cropImage({image: image.id,rendition:selectedRendition,crop:{p:completedCrop,c: crop}})
       setSelectedRendition(null)
       setCompletedCrop(null)
       setAspect(null)
@@ -121,8 +132,8 @@ export const Cropper = ({visible, onCancel, image, onOk}) => {
     }} 
   >
     <Row>
-      <Col span={6}>{thumbnails}</Col>
-      <Col span={18}>
+      <Col span={4}>{thumbnails}</Col>
+      <Col span={20}>
         <Card>
           <ReactCrop
             crop={crop}
@@ -137,6 +148,7 @@ export const Cropper = ({visible, onCancel, image, onOk}) => {
           >
             <img ref={imageRef} src={process.env.REACT_APP_URL+image.path} />
           </ReactCrop>
+          <Button onClick={saveCrop}>Save</Button>
         </Card>
       </Col>
     </Row>

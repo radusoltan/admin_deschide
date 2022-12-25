@@ -2,7 +2,7 @@ import axios from '../lib/axios'
 
 const loginURL = process.env.REACT_APP_API_URL + "/login"
 const logoutURL = process.env.REACT_APP_API_URL + "/logout"
-const checkURL = process.env.REACT_APP_API_URL + "/user" 
+const checkURL = process.env.REACT_APP_API_URL + "/user"
 
 export const Auth = {
   

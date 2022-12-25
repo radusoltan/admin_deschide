@@ -9,7 +9,6 @@ import React, { useEffect, useState } from 'react'
 import { useGetImagesByArticleQuery, useDetachArticleImageMutation, useSetArticleMainImageMutation } from '../../../services/images'
 import { ArticleImageUploader } from './uploader'
 import { Cropper } from './cropper'
-// import { Cropper } from './cropper'
 
 export const ArticleImages = ({article}) => {
 
@@ -91,9 +90,9 @@ export const ArticleImages = ({article}) => {
     />
 
     {
-      images.length === 0 ? '' : 
-        <Cropper 
-          visible={crop} 
+      images.length === 0 ? '' :
+        <Cropper
+          visible={crop}
           image={data.find(({isMain})=>isMain)}
           onOk={()=>setCrop(false)}
           onCancel={()=>setCrop(false)}

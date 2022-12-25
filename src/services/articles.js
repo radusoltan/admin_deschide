@@ -60,8 +60,43 @@ export const articles = createApi({
           body,
           headers
         }),
-        invalidatesTags: result => [{type: 'Articles', id: result.id}]
+        invalidatesTags: result => [{type:'Articles',id: result.id}]
+        // invalidatesTags: result => [{type: 'Articles', id: result.id}]
       }),
+      // updateIsAlert: build.mutation({
+      //   query: (article) => ({
+      //     url: baseUrl+`/articles/${article}/alert`,
+      //     method: 'PATCH',
+      //     body: {
+      //       locale: i18n.language
+      //     },
+      //     headers
+      //   }),
+      //
+      //   invalidatesTags: result => [{type: 'Articles', id: result.id}]
+      // }),
+      // updateIsFlash: build.mutation({
+      //   query: (article) => ({
+      //     url: baseUrl+`/articles/${article}/flash`,
+      //     method: 'PATCH',
+      //     body: {
+      //       locale: i18n.language
+      //     },
+      //     headers
+      //   }),
+      //   invalidatesTags: result => [{type: 'Articles', id: result.id}]
+      // }),
+      // updateIsBreaking: build.mutation({
+      //   query: (article) => ({
+      //     url: baseUrl+`/articles/${article}/breaking`,
+      //     method: 'PATCH',
+      //     body: {
+      //       locale: i18n.language
+      //     },
+      //     headers
+      //   }),
+      //   invalidatesTags: result => [{type: 'Articles', id: result.id}]
+      // }),
       search: build.mutation({
         query: (body) => ({
           url: '/articles/search',
@@ -97,5 +132,8 @@ export const {
     useSetArticlePublishTimeMutation,
     useGetAllArticlesQuery,
     useSearchMutation,
-    useDeleteArticlePublishTimeMutation
+    useDeleteArticlePublishTimeMutation,
+    useUpdateIsAlertMutation,
+    useUpdateIsFlashMutation,
+    useUpdateIsBreakingMutation
 } = articles
