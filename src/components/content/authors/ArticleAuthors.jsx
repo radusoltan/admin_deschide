@@ -91,12 +91,12 @@ const ArticleAuthors = ({article}) => {
         )
       }}
     />
-    <SelectAuthor
-      visible={isSelect}
-      onCancel={() => setIsSelect(false)}
-      article={article}
-      onOk={(selectedOption) => addSelectedAuthor(selectedOption) }
-    />
+    {/*<SelectAuthor*/}
+    {/*  visible={isSelect}*/}
+    {/*  onCancel={() => setIsSelect(false)}*/}
+    {/*  article={article}*/}
+    {/*  onOk={(selectedOption) => addSelectedAuthor(selectedOption) }*/}
+    {/*/>*/}
     <AddAuthor
       visible={isNew}
       onCancel={()=>{

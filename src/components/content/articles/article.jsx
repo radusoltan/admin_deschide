@@ -22,6 +22,11 @@ const ArticleFormPage = () => {
   const [deleteEvent,{data: deletedData,isSuccess: deletedSuccess}] = useDeleteArticlePublishTimeMutation()
   const {Option} = Select
 
+
+
+
+  // state
+
   const [loading,setLoading] = useState(false)
   const [articleTitle, setArticleTitle] = useState('')
   const [articleLead, setArticleLead] = useState('')
@@ -116,6 +121,10 @@ const ArticleFormPage = () => {
     updateArticleIsSuccess,
     deletedSuccess
   ])
+
+  // if change language redirect to category
+
+  i18n.on('languageChanged', ()=>navigate(`/content/category/${categoryId}`))
 
   const handleTitleChange = title => {
     setArticleTitle(title.target.value)

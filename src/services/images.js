@@ -23,13 +23,22 @@ export const Images = createApi({
       //     ...response.data.data.map(({id})=> ({type: "Images", id})),
       //     {type: "Images", id: 'PARTIAL-LIST'}
       // ] : [{type: "Images", id: 'PARTIAL-LIST'}]
+    }),
+    imageAddMeta: build.mutation({
+      query: ({image,body})=>({
+        url: `/image/${image}/meta`,
+        method: "PATCH",
+        body,
+        headers
+      })
     })
   })
 
 })
 
 export const {
-  useGetAllImagesQuery
+  useGetAllImagesQuery,
+  useImageAddMetaMutation
 
 } = Images
 

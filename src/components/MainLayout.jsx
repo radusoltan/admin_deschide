@@ -59,7 +59,7 @@ export const MainLayout = () => {
         <div className='header-buttons'>
           <Space>
             <Button onClick={handleLogout}>Log Out</Button>
-            <Select defaultValue={'ro'} onChange={changeLang}>
+            <Select defaultValue={i18n.language} onChange={changeLang}>
               <Option value="ro">RO</Option>
               <Option value="ru">RU</Option>
               <Option value="en">EN</Option>

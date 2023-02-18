@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import i18n from "../i18n"
 
 const baseUrl = process.env.REACT_APP_API_URL
 const headers = {
@@ -13,9 +14,9 @@ export const categories = createApi({
     tagTypes: ['Categories'],
     endpoints: build => ({
         getCategories: build.query({
-            query: page => createRequest(`/categories?page=${page}`),
+            query: ({page, locale}) => createRequest(`/categories?page=${page}&locale=${locale}`),
             providesTags: result => result ? [
-                ...result.data.map(({id})=>({type: 'Categories',id})),
+                result.data.map(({id})=>({type: 'Categories',id})),
                 {type: 'Categories', id: 'PARTIAL-LIST'}
             ] : [{type: 'Categories', id: 'PARTIAL-LIST'}]
         }),
@@ -29,7 +30,10 @@ export const categories = createApi({
                 body: data,
                 headers
             }),
-            invalidatesTags: [{ type: 'Categories', id: 'PARTIAL-LIST' }]
+            invalidatesTags: ({id}) => [
+                [{type: 'Categories', id}],
+                {type: 'Categories', id: 'PARTIAL-LIST'}
+            ]
         }),
         updateCategory: build.mutation({
             query: ({id,body}) => ({
@@ -38,7 +42,10 @@ export const categories = createApi({
                 body,
                 headers
             }),
-            invalidatesTags: (result,error,{id}) => [{type: 'Categories',id}]
+            invalidatesTags: ({id}) => [
+                [{type: 'Categories', id}],
+                {type: 'Categories', id: 'PARTIAL-LIST'}
+            ]
         }),
         deleteCategory: build.mutation({
             query: id => ({
@@ -46,16 +53,19 @@ export const categories = createApi({
                 method: 'DELETE',
                 headers
             }),
-            invalidatesTags: (result,error,id) => [{type:'Categories', id}]
+            invalidatesTags: result => [{type: 'Categories', id: 'PARTIAL-LIST'}]
         }),
         publishCategory: build.mutation({
-            query: (id) => ({
+            query: ({id,locale}) => ({
                 url: `/category/${id}`,
                 method: "PATCH",
-                body: {},
+                body: {locale},
                 headers
             }),
-            invalidatesTags: (res,err,id) => [{type:'Categories', id}]
+            invalidatesTags: ({id}) => [
+                [{type: "Categories",id}],
+                {type: 'Categories', id: 'PARTIAL-LIST'}
+            ]
         })
     })
 })

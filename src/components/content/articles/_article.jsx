@@ -52,11 +52,12 @@ export const Article = () => {
   const publishedEventElement = translations.find(({publish_at})=>publish_at)
 
   const save = () => {
+    console.log('Save')
     form.validateFields()
     
     const formValues = form.getFieldsValue()
 
-    // console.log(formValues);
+    // console.log(articleBody);
 
     const body = {
       ...formValues,
@@ -64,11 +65,11 @@ export const Article = () => {
       lng: i18n.language
     }
 
-    updateArticle({article,body})
-
-    notification.success({
-      message: 'Articol salvat'
-    })
+    // updateArticle({article,body})
+    //
+    // notification.success({
+    //   message: 'Articol salvat'
+    // })
     
   }
 
@@ -92,7 +93,7 @@ export const Article = () => {
       </Space>
     }
     title={
-      status === 'P' ? 'Published Article' : 
+      status === 'P' ? 'Published ___article' :
       status === 'S' ? "Submited" : "New"
     }
   >
@@ -181,7 +182,7 @@ export const Article = () => {
             <PublishEvent article={article} visible={publishEvent} onCancel={()=>setPublishEvent(false)} onOk={()=>setPublishEvent(false)}  />
             
           </Card>
-          {/* Article Images */}
+          {/* ___article Images */}
           <ArticleImages article={article} />
           
         </Col>

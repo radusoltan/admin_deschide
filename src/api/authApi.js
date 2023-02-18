@@ -1,8 +1,9 @@
 import axios from '../lib/axios'
+import useSWR from "swr";
 
 const loginURL = process.env.REACT_APP_API_URL + "/login"
 const logoutURL = process.env.REACT_APP_API_URL + "/logout"
-const checkURL = process.env.REACT_APP_API_URL + "/user"
+const checkURL = process.env.REACT_APP_API_URL + "/check-auth"
 
 export const Auth = {
   
@@ -39,17 +40,27 @@ export const Auth = {
         "Authorization": "Bearer " + localStorage.getItem('token')//+'1',
       }
     }).catch(e=>{
-      localStorage.clear()      
+      localStorage.clear()
       error(e.response)
     })
 
     if (response.status === 200){
-      
+
       success(response)
-    } else{ 
+    } else{
       localStorage.clear()
-      error(response.response) 
+      error(response.response)
     }
+  },
+
+  useUser: async ()=>{
+
+    const response = await axios.get("/user")
+
+    return {
+
+    }
+
   }
   
 

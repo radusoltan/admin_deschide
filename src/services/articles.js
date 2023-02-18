@@ -15,34 +15,31 @@ export const articles = createApi({
     tagTypes: ['Articles'],
     endpoints: build => ({
       getAllArticles: build.query({
-        query: () => createRequest('/articles'),
+        query: () => createRequest('/articles?locale='.i18n.language),
         providesTags: r => r ? [
           r.map(({ id }) => ({ type: "Articles", id }))
         ] : [{ type: 'Articles', id: 'LIST' }]
       }),
       getArticle: build.query({
-        query: article => createRequest(`/articles/${article}`),
+        query: article => createRequest(`/articles/${article}?locale=${i18n.language}`),
+        // providesTags: response => console.log(response)
         providesTags: ({ id }) => [{ type: 'Articles', id }]
       }),
       getArticlesByCategory: build.query({
-        query: ({category,page,q}) => {
-          const term = q ===null ? '' : q
-          // console.log(term);
-          return {
-            url: `/category/${category}/articles`,
-            headers,
-            params: {
-              page,
-              term,
-              locale: i18n.language
-            }
+        query: ({category,page, q}) => ({
+          url: `/category/${category}/articles`,
+          headers,
+          params: {
+            page,
+            term: q ? q : '',
+            locale: i18n.language
           }
-          // createRequest(`/category/${category}/articles?page=${page}`)
-        },
+        }),
         providesTags: result => result ? [
-            ...result.data.map(({id})=>({type:'Articles',id}))
-        ] : [{type:'Articles',id:'PARTIAL-LIST'}]
-          
+          result.data.map(({id})=>({type: 'Articles', id})),
+          { type: 'Articles',id:"PARTIAL-LIST"}
+        ] : [{ type: 'Articles',id:"PARTIAL-LIST"}]
+
       }),
       addArticle: build.mutation({
         query: ({category,values}) => ({
@@ -51,7 +48,10 @@ export const articles = createApi({
           body: {...values},
           headers
         }),
-        invalidatesTags: (result,error,obj) => console.log('articles API inv obj', obj)
+        invalidatesTags: (result,error,obj) => result ? [
+          [{ type: 'Articles', id: result.id}],
+          { type: 'Articles', id: "PARTIAL-LIST"}
+        ] : [{ type: 'Articles',id:'PARTIAL-LIST'}]
       }),
       updateArticle: build.mutation({
         query: ({article,body}) => ({
@@ -61,42 +61,7 @@ export const articles = createApi({
           headers
         }),
         invalidatesTags: result => [{type:'Articles',id: result.id}]
-        // invalidatesTags: result => [{type: 'Articles', id: result.id}]
       }),
-      // updateIsAlert: build.mutation({
-      //   query: (article) => ({
-      //     url: baseUrl+`/articles/${article}/alert`,
-      //     method: 'PATCH',
-      //     body: {
-      //       locale: i18n.language
-      //     },
-      //     headers
-      //   }),
-      //
-      //   invalidatesTags: result => [{type: 'Articles', id: result.id}]
-      // }),
-      // updateIsFlash: build.mutation({
-      //   query: (article) => ({
-      //     url: baseUrl+`/articles/${article}/flash`,
-      //     method: 'PATCH',
-      //     body: {
-      //       locale: i18n.language
-      //     },
-      //     headers
-      //   }),
-      //   invalidatesTags: result => [{type: 'Articles', id: result.id}]
-      // }),
-      // updateIsBreaking: build.mutation({
-      //   query: (article) => ({
-      //     url: baseUrl+`/articles/${article}/breaking`,
-      //     method: 'PATCH',
-      //     body: {
-      //       locale: i18n.language
-      //     },
-      //     headers
-      //   }),
-      //   invalidatesTags: result => [{type: 'Articles', id: result.id}]
-      // }),
       search: build.mutation({
         query: (body) => ({
           url: '/articles/search',
@@ -119,7 +84,8 @@ export const articles = createApi({
           url: `/translation/${id}/delete-event`,
           method: 'DELETE',
           headers
-        })
+        }),
+        invalidatesTags: (res, error, {id}) => [{ type: 'Articles', id: res.id}]
       })
     })
 })
@@ -135,5 +101,6 @@ export const {
     useDeleteArticlePublishTimeMutation,
     useUpdateIsAlertMutation,
     useUpdateIsFlashMutation,
-    useUpdateIsBreakingMutation
+    useUpdateIsBreakingMutation,
+    useSearchByCategoryQuery
 } = articles

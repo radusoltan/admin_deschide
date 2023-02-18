@@ -14,7 +14,8 @@ import {
 } from '../../../services/images'
 import { ArticleImageUploader } from './uploader'
 import { Cropper } from './cropper'
-import AllImages from "./AllImages";
+import AllImages from "./AllImages"
+import {EditMeta} from './EditMeta'
 
 export const ArticleImages = ({article}) => {
 
@@ -26,6 +27,7 @@ export const ArticleImages = ({article}) => {
   const [attachArticleImages] = useAttachArticleImageMutation()
   const [crop,setCrop] = useState(false)
   const [SelectFromLibrary, setSelectFromLibrary] = useState(false);
+  const [editMeta, setEditMeta] = useState(false)
   const [selectedImages, setSelectedImages] = useState()
 
   const selectFromLibrary = () => {
@@ -78,6 +80,9 @@ export const ArticleImages = ({article}) => {
   </Card></div>)
 
   return <Card extra={<Space direction="horizontal">
+    <Button className='image-card-buttons' onClick={()=>{
+      setEditMeta(true)
+    }} type="warning" >Edit Meta</Button>
     <Button className='image-card-buttons' type="primary" onClick={selectFromLibrary} >Select</Button>
     <Button
         className='image-card-buttons'
@@ -131,6 +136,7 @@ export const ArticleImages = ({article}) => {
         articleImages={data}
       />
     </Modal>
+    <EditMeta images={data} visible={editMeta} onOk={()=>{setEditMeta(false)}} onCancel={()=>{setEditMeta(false)}} />
     
   </Card>
 }
