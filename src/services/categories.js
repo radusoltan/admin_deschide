@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import i18n from "../i18n";
 
 const baseUrl = process.env.REACT_APP_API_URL
 const headers = {
@@ -13,7 +14,7 @@ export const categories = createApi({
     tagTypes: ['Categories'],
     endpoints: build => ({
         getCategories: build.query({
-            query: page => createRequest(`/categories?page=${page}`),
+            query: page => createRequest(`/categories?page=${page}&locale=${i18n.language}`),
             providesTags: result => result ? [
                 ...result.data.map(({id})=>({type: 'Categories',id})),
                 {type: 'Categories', id: 'PARTIAL-LIST'}
@@ -33,7 +34,7 @@ export const categories = createApi({
         }),
         updateCategory: build.mutation({
             query: ({id,body}) => ({
-                url: `/categories/${id}`,
+                url: `/categories/${id}?locale=${i18n.language}`,
                 method: 'PATCH',
                 body,
                 headers
@@ -50,7 +51,7 @@ export const categories = createApi({
         }),
         publishCategory: build.mutation({
             query: (id) => ({
-                url: `/category/${id}`,
+                url: `/category/${id}?locale=${i18n.language}`,
                 method: "PATCH",
                 body: {},
                 headers

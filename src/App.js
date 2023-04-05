@@ -11,7 +11,8 @@ import { Category } from "./components/content/categories/category"
 import Users from "./components/management/users"
 import Roles from "./components/management/roles"
 import Permissions from "./components/management/permissions"
-import ArticleFormPage from "./components/content/articles/article";
+import {ArticleForm} from "./components/content/articles/article";
+import {ArticlesLists} from "./components/content/lists/articlesLists";
 
 
 const App = () => {
@@ -21,7 +22,8 @@ const App = () => {
       <Route path="content/categories" element={<Categories/>} />
       <Route path="content/category/:category" element={<Category />} />
       <Route path="content/articles" element={<Articles/>} />
-      <Route path="content/article/:article" element={<ArticleFormPage />} />
+      <Route path="content/article/:article" element={<ArticleForm />} />
+      <Route path="content/lists" element={<ArticlesLists />}/>
       <Route path="management/users" element={<Users />} />
       <Route path="management/roles" element={<Roles />} />
       <Route path="management/permissions" element={<Permissions />} />

@@ -21,7 +21,7 @@ export const articles = createApi({
         ] : [{ type: 'Articles', id: 'LIST' }]
       }),
       getArticle: build.query({
-        query: article => createRequest(`/articles/${article}`),
+        query: ({article, locale}) => createRequest(`/articles/${article}?locale=${locale}`),
         providesTags: ({ id }) => [{ type: 'Articles', id }]
       }),
       getArticlesByCategory: build.query({

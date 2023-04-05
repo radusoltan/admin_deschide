@@ -13,7 +13,10 @@ export const articleImages = createApi({
   tagTypes: ['articleImages'],
   endpoints: build => ({
     getImagesByArticle: build.query({
-      query: article => createRequest(`/article/${article}/images`),
+      query: (id) => createRequest(`/article/${id}/images`),
+      // query: article => {
+      //   console.log(article)
+      // },
       providesTags: result => result ? [
         ...result.map(({ id }) => ({ type:'articleImages',id})),
         {type:'articleImages', id: 'LIST'}

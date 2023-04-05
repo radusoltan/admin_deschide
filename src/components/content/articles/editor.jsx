@@ -1,11 +1,27 @@
 import React,{useState,useEffect} from 'react'
 import { Editor } from '@tinymce/tinymce-react'
+import {useGetImagesByArticleQuery} from "../../../services/images";
 
-export const BodyEditor = ({initialValue, onEdit, field}) => {
+export const BodyEditor = ({initialValue, onEdit, field, images}) => {
   
   const [value,setValue] = useState()
+  // console.log(images)
 
-  useEffect(() => setValue(initialValue ?? ''),[initialValue])
+  useEffect(() => {
+    if (initialValue){
+      setValue(initialValue ?? '')
+    }
+    // if (isSuccess){
+    //   setImageList([])
+    // }
+
+  },[initialValue])
+
+  const image_list = images?.map(image => ({
+    title: image.name,
+    value: process.env.REACT_APP_URL + image.path + '/' + image.name
+  }))
+  // console.log(image_list)
   return < Editor
     apiKey="aywo416v6fszmnbeapee6mhh1rusgyfzjbdetttu6qydo8pu"
     // initialValue = { initialValue }
@@ -27,18 +43,11 @@ export const BodyEditor = ({initialValue, onEdit, field}) => {
         'alignright alignjustify | bullist numlist outdent indent | ' +
         'removeformat | help |'+
         'image',
-      // setup: editor => {
-      //   editor.ui.registry.addButton('myButton', {
-      //     icon: 'user',
-      //     onAction: function (_) {
-      //       editor.insertContent('&nbsp;<strong>It\'s my icon button!</strong>&nbsp;');
-      //     }
-      //   });
-      // },
-      // image_list,
+      image_list,
       image_advtab: true,
       a11y_advanced_options: true,
-      content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+      content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+      
     }}
   />
 }

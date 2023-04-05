@@ -50,6 +50,7 @@ export const Cropper = ({visible, onCancel, image, onOk}) => {
 
   useEffect(()=>{
     if (renditionsSuccess){
+      console.log(renditions)
       setSelectedRendition(renditions[0].id);
       setCrop(renditions[0].coords)
       setAspect(renditions[0].aspect)
@@ -111,8 +112,8 @@ export const Cropper = ({visible, onCancel, image, onOk}) => {
         } : {}      
       }
     >
-      <h4>{rendition.name}</h4>
-      <p>{rendition.width} x {rendition.height}</p>
+      {/*<h4>{rendition.name}</h4>*/}
+      {/*<p>{rendition.width} x {rendition.height}</p>*/}
 
     </Card>
   </div>)
