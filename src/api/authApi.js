@@ -44,7 +44,7 @@ export const Auth = {
     })
 
     if (response.status === 200){
-      
+      localStorage.clear()
       success(response)
     } else{ 
       localStorage.clear()

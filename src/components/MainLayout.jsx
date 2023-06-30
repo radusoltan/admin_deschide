@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import { Layout, Menu, Select, Button, Space } from 'antd'
 import {
   Link, NavLink,Outlet,useNavigate
@@ -11,6 +11,8 @@ import { Auth } from '../api/authApi'
 import i18n from '../i18n'
 import { useTranslation } from 'react-i18next'
 import { Navigation } from './Navigation'
+import {useAuth} from "../contexts/AuthContext";
+import axios from "../lib/axios";
 
 
 export const MainLayout = () => {
@@ -24,6 +26,7 @@ export const MainLayout = () => {
 
   const handleLogout = () => {
     Auth.logout(()=>{
+
       navigate('/login')
     },()=>{
       navigate('/login')

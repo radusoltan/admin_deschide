@@ -10,7 +10,7 @@ export const Protected = () => {
   const location = useLocation()
 
   Auth.checkAuth((r)=>{
-      // console.log('Protected check success');
+      console.log('Protected check success');
     },(e)=>{
       navigate('/login',location.pathname)
     })
